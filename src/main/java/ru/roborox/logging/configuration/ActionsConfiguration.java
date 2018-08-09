@@ -13,7 +13,7 @@ public class ActionsConfiguration {
 
     @Order(Ordered.HIGHEST_PRECEDENCE)
     @Bean
-    public WebFilter elasticApmFilter() {
+    public WebFilter actionsFilter() {
         return new ActionFilter();
     }
 }
