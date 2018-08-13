@@ -20,13 +20,11 @@ public class LoggingExceptionHandler implements WebExceptionHandler {
             if (ex instanceof ResponseStatusException) {
                 HttpStatus status = ((ResponseStatusException) ex).getStatus();
                 if (exchange.getResponse().setStatusCode(status)) {
-                    if (status.is5xxServerError()) {
+                    if (status.is5xxServerError() || status == HttpStatus.NOT_FOUND) {
                         logger.error(marker, buildMessage(exchange.getRequest(), ex));
-                    }
-                    else if (status == HttpStatus.BAD_REQUEST) {
+                    } else if (status == HttpStatus.BAD_REQUEST) {
                         logger.warn(marker, buildMessage(exchange.getRequest(), ex));
-                    }
-                    else {
+                    } else {
                         logger.trace(marker, buildMessage(exchange.getRequest(), ex));
                     }
                     return exchange.getResponse().setComplete();
@@ -42,7 +40,7 @@ public class LoggingExceptionHandler implements WebExceptionHandler {
     }
 
     private String buildMessage(ServerHttpRequest request, Throwable ex) {
-        return "Failed to handle request [" + request.getMethod() + " "
+        return "Failed to handle request [" + request.getMethodValue() + " "
                 + request.getURI() + "]: " + ex.getMessage();
     }
 }
