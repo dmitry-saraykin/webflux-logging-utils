@@ -21,7 +21,7 @@ public class LoggingExceptionHandler implements WebExceptionHandler {
                 HttpStatus status = ((ResponseStatusException) ex).getStatus();
                 if (exchange.getResponse().setStatusCode(status)) {
                     if (status.is5xxServerError() || status == HttpStatus.NOT_FOUND) {
-                        logger.error(marker, buildMessage(exchange.getRequest(), ex));
+                        logger.error(marker, buildMessage(exchange.getRequest(), ex), ex);
                     } else if (status == HttpStatus.BAD_REQUEST) {
                         logger.warn(marker, buildMessage(exchange.getRequest(), ex));
                     } else {
@@ -31,7 +31,7 @@ public class LoggingExceptionHandler implements WebExceptionHandler {
                 }
             } else {
                 if (exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR)) {
-                    logger.error(marker, buildMessage(exchange.getRequest(), ex));
+                    logger.error(marker, buildMessage(exchange.getRequest(), ex), ex);
                     return exchange.getResponse().setComplete();
                 }
             }
