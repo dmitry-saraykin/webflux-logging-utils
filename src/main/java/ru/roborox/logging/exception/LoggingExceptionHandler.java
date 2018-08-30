@@ -8,6 +8,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
+
 import reactor.core.publisher.Mono;
 import ru.roborox.logging.utils.LoggingUtils;
 
@@ -28,6 +30,10 @@ public class LoggingExceptionHandler implements WebExceptionHandler {
                         logger.trace(marker, buildMessage(exchange.getRequest(), ex));
                     }
                     return exchange.getResponse().setComplete();
+                }
+            } else if (ex instanceof AccessDeniedException) {
+                if (exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN)) {
+                    logger.warn(marker, buildMessage(exchange.getRequest(), ex));
                 }
             } else {
                 if (exchange.getResponse().setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR)) {
